@@ -16,8 +16,8 @@ return 0 != (int)(*p);}
 
 
 
-int load_part_dump(std::string fname, 
-                   std::vector<TParticle> &particles, 
+int load_part_dump(std::string fname,
+                   std::vector<TParticle> &particles,
                    TDump_config_info & info,
                    const int swap_bytes
                  )
@@ -33,19 +33,21 @@ int load_part_dump(std::string fname,
   header.get_double("t_clusters_save", info.clusters_save_time);
   header.get_double("start_span_radius", info.start_span_radius);
 
+  std::cout<<"Number = "<<size<<std::endl;
+
   particles.resize((int)size);
   FILE* f = fopen(fname.c_str(), "rb");
-  
+
     char buf[header_length];
     fread(buf, header_length, 1, f);
-  
+
 
   for (int i = 0; i < size; i++)
   {
     fread(&(particles[i].r), sizeof(double), 3, f);
     fread(&(particles[i].v), sizeof(double), 3, f);
     fread(&(particles[i].T), sizeof(double), 1, f);
-    if (swap_bytes ^ !(is_inverse_byte_order())) 
+    if (swap_bytes ^ !(is_inverse_byte_order()))
     {
       swap_double(particles[i].r.x);
       swap_double(particles[i].r.y);
@@ -74,16 +76,16 @@ int load_part_dump(std::string fname,
        v->z > 1e+10 || v->z < -1e+10 ||
        (*t) > 1e+10 || (*t) < -1e+10 )
 
-	   
-      i--;
-      size--;
+
+      // i--;
+      // size--;
       particles.pop_back();
 
       std::stringstream i_sstr;
       i_sstr << "load_part_dump :: wrong_particles_coords " << " p.x = " << r->x << " p.y = " << r->y << " p.z = " << r->z << " particles.size() = " << (int)particles.size();
-	   
+
       //assert(0==1, i_sstr.str().c_str())
-    
+
 
   }
   // char buff[512];
@@ -104,14 +106,3 @@ int load_part_dump(std::string fname,
   // }
 	return 1;
 }
-
-
-
- 
-
-
-  
-  
-  
-  
-  

@@ -8,8 +8,12 @@
 #include "dbscan.h"
 
 
-#define MINIMUM_POINTS 5     // minimum number of cluster
-#define EPSILON (1.1*1.1)  // distance for clustering, metre^2
+#define MINIMUM_POINTS 6     // minimum number of cluster
+#define EPSILON (2.1*2.1)  // distance for clustering, metre^2
+
+// extern int MINIMUM_POINTS = 6;
+// extern double EPSILON =(2.1*2.1);
+
 
 void readBenchmarkData(vector<Point>& points)
 {
@@ -96,15 +100,20 @@ void readClusterData(vector<Point>& points)
     free(p);
     //fclose(stream);
 }
-void readDumpData(vector<Point>& points , std::string fname){
+void readDumpData(vector<Point>& points , std::string fname1 , std::string fname2){
 
     std::vector<TParticle> particles;
 
 	int swap_bytes = 0;
 	TDump_config_info info;
 
-	 load_part_dump(fname,
+	 load_part_dump(fname1,
                    particles,
+                    info,
+                    swap_bytes);
+
+        load_part_dump(fname2,
+                     particles,
                     info,
                     swap_bytes);
 
@@ -183,9 +192,10 @@ int main()
 
     // read point data
     // /readClusterData(points);
-    std::string fname("./wr000_r000__ws008_s004_part_dump.dat");
+    std::string fname1("./wr000_r000__ws008_s004_part_dump.dat");
+    std::string fname2("./wr004_r000__ws008_s004_part_dump.dat");
 
-    readDumpData( points ,fname);
+    readDumpData( points ,fname1 , fname2);
 
 
     // constructor
@@ -193,7 +203,7 @@ int main()
 
     // main loop
     ds.run();
-    int idCluster = 1;
+    int idCluster = MINIMUM_POINTS;
 
     std::vector<std::vector<double> > cluster;
     //find dispersion of speeds
