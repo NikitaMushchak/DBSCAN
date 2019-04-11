@@ -8,57 +8,58 @@
 #include "dbscan.h"
 
 
-#define MINIMUM_POINTS 6     // minimum number of cluster
-#define EPSILON (2.1*2.1)  // distance for clustering, metre^2
+#define MINIMUM_POINTS 4     // minimum number of cluster
+#define EPSILON (19.96 * 19.96)  // distance for clustering, metre^2
+#define D "./r000_s002_000199530_config.a3r"
 
 // extern int MINIMUM_POINTS = 6;
 // extern double EPSILON =(2.1*2.1);
 
 
-void readBenchmarkData(vector<Point>& points)
-{
-    // load point cloud
-    FILE *stream;
+// void readBenchmarkData(vector<Point>& points)
+// {
+//     // load point cloud
+//     FILE *stream;
+//
+//     //ai::printMarker();
+//
+//     stream = fopen ("ini.xyz","r");
+//
+//     //ai::printMarker();
+//
+//     if (stream==NULL)
+//       {
+//         std::cout << "Hello" << std::endl;
+//       }
+//
+//     unsigned int minpts, num_points, cluster, i = 0;
+//     double epsilon;
+//     fscanf(stream, "%ud", &num_points);
+//
+//
+//
+//     std::cout << num_points << std::endl;
+//
+//     Point *p = (Point *)calloc(num_points, sizeof(Point));
+//
+//     ai::printMarker();
+//
+//     while (i < num_points)
+//     {
+//             char C;
+//           fscanf(stream, "%c %f %f %f\n",&C, &(p[i].x), &(p[i].y), &(p[i].z));
+//           p[i].clusterID = UNCLASSIFIED;
+//           points.push_back(p[i]);
+//            //std::cout<<"data: "<<p[i].x<<" "<<p[i].y<<" "<<p[i].z<<std::endl;
+//           ++i;
+//     }
+//
+//     free(p);
+//     fclose(stream);
+// }
 
-    //ai::printMarker();
 
-    stream = fopen ("ini.xyz","r");
-
-    //ai::printMarker();
-
-    if (stream==NULL)
-      {
-        std::cout << "Hello" << std::endl;
-      }
-
-    unsigned int minpts, num_points, cluster, i = 0;
-    double epsilon;
-    fscanf(stream, "%ud", &num_points);
-
-
-
-    std::cout << num_points << std::endl;
-
-    Point *p = (Point *)calloc(num_points, sizeof(Point));
-
-    ai::printMarker();
-
-    while (i < num_points)
-    {
-            char C;
-          fscanf(stream, "%c %f %f %f\n",&C, &(p[i].x), &(p[i].y), &(p[i].z));
-          p[i].clusterID = UNCLASSIFIED;
-          points.push_back(p[i]);
-           //std::cout<<"data: "<<p[i].x<<" "<<p[i].y<<" "<<p[i].z<<std::endl;
-          ++i;
-    }
-
-    free(p);
-    fclose(stream);
-}
-
-
-void readClusterData(vector<Point>& points)
+void readClusterData(vector<Point>& points , std::string fname)
 {
     // load point cloud
     std::vector<std::vector<double> > xyz;
@@ -71,10 +72,15 @@ void readClusterData(vector<Point>& points)
     double epsilon;
     //fscanf(stream, "%u\n", &num_points);
 
-    ai::printMarker();
-    ai::loadXYZ(
-         "ini.xyz",
-        xyz);
+    // ai::printMarker();
+    // ai::loadXYZ(
+    //      fname,
+    //     xyz);
+	double a = 1.;
+
+        ai::loadA3R(
+             fname,
+            xyz, a);
         //ai::printMatrix(xyz);
     num_points = xyz.size();
 
@@ -94,12 +100,13 @@ void readClusterData(vector<Point>& points)
           p[i].clusterID = UNCLASSIFIED;
           points.push_back(p[i]);
           ++i;
-          // std::cout<<"data: "<<p[i].x<<" "<<p[i].y<<" "<<p[i].z<<std::endl;
+           // std::cout<<"data: "<<p[i].x<<" "<<p[i].y<<" "<<p[i].z<<std::endl;
     }
 
     free(p);
     //fclose(stream);
 }
+
 void readDumpData(vector<Point>& points , std::string fname1 , std::string fname2){
 
     std::vector<TParticle> particles;
@@ -112,10 +119,10 @@ void readDumpData(vector<Point>& points , std::string fname1 , std::string fname
                     info,
                     swap_bytes);
 
-        load_part_dump(fname2,
-                     particles,
-                    info,
-                    swap_bytes);
+        // load_part_dump(fname2,
+                     // particles,
+                    // info,
+                    // swap_bytes);
 
     std::size_t number = particles.size();
 
@@ -125,7 +132,7 @@ void readDumpData(vector<Point>& points , std::string fname1 , std::string fname
 
     std::vector <TParticle> ::iterator po;
     size_t i=0;
-			for ( po = particles.begin(); po < particles.end(); po++) {
+			for(po = particles.begin(); po < particles.end(); po++){
                 p[i].x = po->r.x;
                 p[i].y = po->r.y;
                 p[i].z = po->r.z;
@@ -189,29 +196,35 @@ void SaveResults(vector<Point>& points , int num_points){
 int main()
 {
     vector<Point> points;
-
     // read point data
     // /readClusterData(points);
-    std::string fname1("./wr000_r000__ws008_s004_part_dump.dat");
+    std::string fname1("./wr000_r000__ws008_s004_part_dump2.dat");
     std::string fname2("./wr004_r000__ws008_s004_part_dump.dat");
 
-    readDumpData( points ,fname1 , fname2);
+
+    std::string sting(D);
+    //readDumpData( points ,fname1 , fname2);
+	// ai::printMarker();
+    // readClusterData(points , sting);
 
 
+	readDumpData( points , fname1 , fname2);
+	// ai::printMarker();
     // constructor
     DBSCAN ds(MINIMUM_POINTS, EPSILON, points);
-
+	ai::printMarker();
     // main loop
     ds.run();
+	ai::printMarker();
     int idCluster = MINIMUM_POINTS;
-
+ai::printMarker();
     std::vector<std::vector<double> > cluster;
     //find dispersion of speeds
-     ds.FindDispersion( cluster, idCluster);
-
+	ds.FindDispersion( cluster, idCluster);
+ai::printMarker();
     // result of DBSCAN algorithm
     //printResults(ds.m_points, ds.getTotalPointSize());
     SaveResults(ds.m_points, ds.getTotalPointSize());
-
+ai::printMarker();
     return 0;
 }

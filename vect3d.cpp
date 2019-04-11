@@ -7,14 +7,14 @@
 //	11.04.2001
 //
 //-----------------------------------------------------------------------------------
-
+#include <random>
 #include "vect3d.h"
 //#include "util.h"
 
 
 inline double rand(const double min, const double max)	//	Random double value from min to max
-{ 
-	return min + (max - min) * (double)rand() / RAND_MAX; 
+{
+	return min + (max - min) * (double)rand() / RAND_MAX;
 }
 
 
@@ -29,7 +29,7 @@ void Vect3D::Swap(int mode)				//	 mode = 0,1,2;  default mode = 1
 {
 	if (!mode) return;
 	double zz = z;
-	if (mode == 1)	{ z = x; x = y; y = zz; return; } 
+	if (mode == 1)	{ z = x; x = y; y = zz; return; }
 	if (mode == 2)	{ z = y; y = x; x = zz;	return; }
 }
 
@@ -40,7 +40,7 @@ Vect3D Vect3D::GetSwapped(int mode) const	//	 mode = 0,1,2;  default mode = 1
 
 //-----------------------------------------------------------------------------------
 
-void Vect3D::SetRand(const double x_min, const double y_min, const double z_min, const double x_max, const double y_max, const double z_max) 
+void Vect3D::SetRand(const double x_min, const double y_min, const double z_min, const double x_max, const double y_max, const double z_max)
 {
 	x = rand(x_min, x_max);
 	y = rand(y_min, y_max);
@@ -49,7 +49,7 @@ void Vect3D::SetRand(const double x_min, const double y_min, const double z_min,
 
 //-----------------------------------------------------------------------------------
 
-void Vect3D::SetRand(const double r_max) 
+void Vect3D::SetRand(const double r_max)
 {
 	double rr_max = r_max * r_max;
 	do SetRand(-r_max, -r_max,0 , r_max,r_max , 0);
@@ -61,10 +61,10 @@ void Vect3D::SetRand(const double r_max)
 //-----------------------------------------------------------------------------------
 
 void Vect3D::Rotate(double &x, double &y, const double sin_f, const double cos_f)
-{ 
+{
 	double x1;
-	x1 =  x * cos_f - y * sin_f; 
-	y  =  x * sin_f + y * cos_f; 
+	x1 =  x * cos_f - y * sin_f;
+	y  =  x * sin_f + y * cos_f;
 	x  =  x1;
 }
 
@@ -79,6 +79,5 @@ Vect3D ConvertXY(double ro,double fi,double zz)
     Vect3D A(x,y,z);
     return A;
   }
-  
+
 //-----------------------------------------------------------------------------------
-  
